@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $namaSekolah }} - SIPS</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Sistem Informasi Pelanggaran Siswa - Monitoring dan pencatatan pelanggaran siswa">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SIPS">
+    <meta name="application-name" content="SIPS">
+    <meta name="msapplication-TileColor" content="#4f46e5">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/langgar.png">
+
+    <!-- PWA Icons for iOS -->
+    <link rel="icon" type="image/png" sizes="72x72" href="/icons/langgar.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/langgar.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="/icons/langgar.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="/icons/langgar.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="/icons/langgar.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/langgar.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="/icons/langgar.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/langgar.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -360,7 +385,109 @@
         </div>
     </div>
 
+    <!-- PWA Install Banner -->
+    <div id="pwa-install-banner" class="fixed bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-96 bg-white rounded-2xl shadow-2xl shadow-indigo-200 border border-gray-100 p-4 hidden flex-col gap-3 z-40">
+        <div class="flex items-start gap-3">
+            <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-semibold text-gray-800">Instal Aplikasi SIPS</h3>
+                <p class="text-sm text-gray-500 mt-1">Tambahkan ke homescreen untuk akses cepat seperti aplikasi native</p>
+            </div>
+            <button onclick="closeInstallBanner()" class="text-gray-400 hover:text-gray-600 flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="flex gap-2 mt-2">
+            <button onclick="closeInstallBanner()" class="flex-1 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-xl text-sm font-medium transition-colors">
+                Nanti saja
+            </button>
+            <button onclick="installPWA()" class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition-colors">
+                Install Sekarang
+            </button>
+        </div>
+    </div>
+
     <script>
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installBanner = document.getElementById('pwa-install-banner');
+
+        // Hide default iOS install banner by preventing default behavior
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Show custom install banner
+            if (installBanner) {
+                installBanner.classList.remove('hidden');
+                installBanner.classList.add('flex');
+            }
+        });
+
+        // Handle iOS PWA installation
+        function showiOSInstallPrompt() {
+            if (installBanner) {
+                installBanner.classList.remove('hidden');
+                installBanner.classList.add('flex');
+            }
+        }
+
+        // Close install banner
+        function closeInstallBanner() {
+            if (installBanner) {
+                installBanner.classList.add('hidden');
+                installBanner.classList.remove('flex');
+            }
+            // Store that user dismissed the banner in localStorage
+            localStorage.setItem('pwaInstallDismissed', 'true');
+        }
+
+        // Install button click handler
+        async function installPWA() {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                // Clear the deferredPrompt
+                deferredPrompt = null;
+                // Hide the banner
+                if (installBanner) {
+                    installBanner.classList.add('hidden');
+                    installBanner.classList.remove('flex');
+                }
+            } else {
+                // For iOS, show instructions
+                alert('Untuk menginstal SIPS di iPhone/iPad:\n\n1. Ketuk tombol Share (bagikan) di bawah\n2. Scroll ke bawah dan ketuk "Add to Home Screen"\n3. Ketuk "Add" untuk menambahkan ke homescreen');
+            }
+        }
+
+        // Check if app is already installed
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            // App is installed
+            console.log('App is running in standalone mode');
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
         // Chatbot Functionality
         const chatbotToggle = document.getElementById('chatbot-toggle');
         const chatbotWindow = document.getElementById('chatbot-window');
