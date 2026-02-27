@@ -8,7 +8,13 @@ use App\Http\Controllers\KendaliJenisPelanggaran;
 use App\Http\Controllers\KendaliAdmin;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [KendaliUtama::class, 'landing'])->name('landing');
+// Splash Screen Route (First page when app launches)
+Route::get('/', function () {
+    return view('splash');
+})->name('splash');
+
+// Landing Page Route
+Route::get('/landing', [KendaliUtama::class, 'landing'])->name('landing');
 
 // Landing page API (public)
 Route::get('/api/landing/stats', [KendaliUtama::class, 'getLandingStats'])->name('api.landing.stats');

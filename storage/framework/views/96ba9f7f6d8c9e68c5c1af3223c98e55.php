@@ -7,16 +7,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SIPS">
-    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="apple-touch-icon" href="<?php echo e(asset('apple-touch-icon.png')); ?>">
     <!-- iOS Splash Screens -->
-    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="{{ asset('icon-512.png') }}">
-    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="{{ asset('icon-512.png') }}">
-    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="{{ asset('icon-512.png') }}">
-    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="{{ asset('icon-512.png') }}">
-    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="{{ asset('icon-512.png') }}">
-    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="{{ asset('icon-512.png') }}">
-    <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
-    <title>Registrasi - SIPS</title>
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="<?php echo e(asset('icon-512.png')); ?>">
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="<?php echo e(asset('icon-512.png')); ?>">
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" href="<?php echo e(asset('icon-512.png')); ?>">
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="<?php echo e(asset('icon-512.png')); ?>">
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="<?php echo e(asset('icon-512.png')); ?>">
+    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="<?php echo e(asset('icon-512.png')); ?>">
+    <link rel="manifest" href="<?php echo e(asset('manifest.webmanifest')); ?>">
+    <title>Login - SIPS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -78,67 +78,58 @@
         <span>Install App</span>
     </button>
 
-    <!-- Registration Card -->
+    <!-- Login Card -->
     <div class="relative w-full max-w-md">
         <!-- Logo/Header -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-200 mb-4">
                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
             </div>
             <h1 class="text-2xl font-bold text-gray-800 mb-1">SIPS</h1>
             <p class="text-gray-500 text-sm">Sistem Informasi Pelanggaran Siswa</p>
         </div>
 
-        <!-- Registration Form Card -->
+        <!-- Login Form Card -->
         <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100">
-            <h2 class="text-xl font-semibold text-gray-800 mb-6 text-center">Registrasi Petugas Baru</h2>
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 text-center">Masuk sebagai Petugas</h2>
 
             <!-- Success Message -->
-            @if(session('success'))
+            <?php if(session('success')): ?>
                 <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-center gap-2 animate-fade-in">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    {{ session('success') }}
-                </div>
-            @endif
+                    <?php echo e(session('success')); ?>
 
-            <!-- Validation Errors -->
-            @if($errors->any())
-                <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm animate-shake">
-                    <ul class="list-disc list-inside">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
                 </div>
-            @endif
+            <?php endif; ?>
 
-            <form action="{{ route('petugas.register') }}" method="POST" class="space-y-5">
-                @csrf
+            <!-- Info Message -->
+            <?php if(session('info')): ?>
+                <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 text-sm flex items-center gap-2 animate-fade-in">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <?php echo e(session('info')); ?>
 
-                <!-- Name Input -->
-                <div class="relative group">
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value="{{ old('name', '') }}"
-                            placeholder="Nama lengkap Anda"
-                            required
-                            class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
-                        >
-                    </div>
                 </div>
+            <?php endif; ?>
+
+            <!-- Error Messages -->
+            <?php if($errors->has('email')): ?>
+                <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2 animate-shake">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <?php echo e($errors->first('email')); ?>
+
+                </div>
+            <?php endif; ?>
+
+            <form action="<?php echo e(route('login.action')); ?>" method="POST" class="space-y-5">
+                <?php echo csrf_field(); ?>
 
                 <!-- Email Input -->
                 <div class="relative group">
@@ -153,72 +144,22 @@
                             type="email"
                             id="email"
                             name="email"
-                            value="{{ old('email', '') }}"
+                            value="<?php echo e(old('email', '')); ?>"
                             placeholder="nama@email.com"
                             required
                             class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
                         >
+                        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="mt-1 text-sm text-red-600"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
-                </div>
-
-                <!-- Jabatan Dropdown -->
-                <div class="relative group">
-                    <label for="jabatan" class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <select
-                            id="jabatan"
-                            name="jabatan"
-                            required
-                            onchange="toggleKelasField()"
-                            class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200 appearance-none cursor-pointer"
-                        >
-                            <option value="">-- Pilih Jabatan --</option>
-                            <option value="Kesiswaan" {{ old('jabatan') == 'Kesiswaan' ? 'selected' : '' }}>Kesiswaan</option>
-                            <option value="Wali Kelas" {{ old('jabatan') == 'Wali Kelas' ? 'selected' : '' }}>Wali Kelas</option>
-                            <option value="Guru BK" {{ old('jabatan') == 'Guru BK' ? 'selected' : '' }}>Guru BK</option>
-                            <option value="OSIS" {{ old('jabatan') == 'OSIS' ? 'selected' : '' }}>OSIS (Catat Pelanggaran)</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kelas Dropdown (only for Wali Kelas) -->
-                <div id="kelas-field" class="relative group hidden">
-                    <label for="kelas" class="block text-sm font-medium text-gray-700 mb-2">Kelas</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <select
-                            id="kelas"
-                            name="kelas"
-                            class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200 appearance-none cursor-pointer"
-                        >
-                            <option value="">-- Pilih Kelas --</option>
-                            @foreach($kelasList as $kelas)
-                                <option value="{{ $kelas }}" {{ old('kelas') == $kelas ? 'selected' : '' }}>{{ $kelas }}</option>
-                            @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    @error('kelas')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
                 </div>
 
                 <!-- Password Input -->
@@ -256,88 +197,65 @@
                     </div>
                 </div>
 
-                <!-- Password Confirmation Input -->
-                <div class="relative group">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                        </div>
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center cursor-pointer group">
                         <input
-                            type="password"
-                            id="password_confirmation"
-                            name="password_confirmation"
-                            placeholder="••••••••"
-                            required
-                            minlength="6"
-                            class="w-full pl-12 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                            type="checkbox"
+                            name="remember"
+                            <?php echo e(old('remember') ? 'checked' : ''); ?>
+
+                            class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-colors duration-200"
                         >
-                    </div>
+                        <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-800 transition-colors duration-200">Ingat saya</span>
+                    </label>
+                    <a href="#" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors duration-200">
+                        Lupa password?
+                    </a>
                 </div>
 
-                <!-- Register Button -->
+                <!-- Login Button -->
                 <button
                     type="submit"
                     class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-lg shadow-indigo-200 hover:shadow-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                 >
-                    Daftar Sekarang
+                    Masuk
                 </button>
             </form>
+        </div>
 
-            <!-- Back to Login -->
+            <!-- Registration Link -->
             <div class="text-center mt-6">
                 <p class="text-gray-500 text-sm">
-                    Sudah punya akun?
-                    <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200">
-                        Masuk di sini
+                    Belum punya akun?
+                    <a href="<?php echo e(route('petugas.register.show')); ?>" class="text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200">
+                        Daftar di sini
                     </a>
                 </p>
             </div>
-        </div>
 
-        <!-- Footer -->
+            <!-- Footer -->
         <p class="text-center text-gray-500 text-sm mt-6">
-            &copy; {{ date('Y') }} SIPS. All rights reserved.
+            &copy; <?php echo e(date('Y')); ?> SIPS. All rights reserved.
         </p>
     </div>
 
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
-            const confirmPasswordInput = document.getElementById('password_confirmation');
             const eyeIcon = document.getElementById('eye-icon');
             const eyeOffIcon = document.getElementById('eye-off-icon');
 
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                confirmPasswordInput.type = 'text';
                 eyeIcon.classList.add('hidden');
                 eyeOffIcon.classList.remove('hidden');
             } else {
                 passwordInput.type = 'password';
-                confirmPasswordInput.type = 'password';
                 eyeIcon.classList.remove('hidden');
                 eyeOffIcon.classList.add('hidden');
             }
         }
-
-        function toggleKelasField() {
-            const jabatan = document.getElementById('jabatan').value;
-            const kelasField = document.getElementById('kelas-field');
-
-            if (jabatan === 'Wali Kelas') {
-                kelasField.classList.remove('hidden');
-            } else {
-                kelasField.classList.add('hidden');
-            }
-        }
-
-        // Check on page load if Jabatan is Wali Kelas
-        document.addEventListener('DOMContentLoaded', function() {
-            toggleKelasField();
-        });
 
         // PWA Install Handler
         let deferredPrompt;
@@ -384,4 +302,4 @@
     </script>
 </body>
 </html>
-
+<?php /**PATH /Users/abscom23/Desktop/SIPS/resources/views/login.blade.php ENDPATH**/ ?>
