@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+    base: '/',
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
@@ -12,7 +13,6 @@ export default defineConfig({
         tailwindcss(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icons/langgar.png'],
             manifest: {
                 name: 'SIPS - Sistem Informasi Pelanggaran Siswa',
                 short_name: 'SIPS',
@@ -25,30 +25,25 @@ export default defineConfig({
                 start_url: '/',
                 icons: [
                     {
-                        src: 'icon-192.png',
+                        src: '/icon-192.png',
                         sizes: '192x192',
                         type: 'image/png'
                     },
                     {
-                        src: 'icon-512.png',
+                        src: '/icon-512.png',
                         sizes: '512x512',
                         type: 'image/png'
                     },
                     {
-                        src: 'apple-touch-icon.png',
+                        src: '/apple-touch-icon.png',
                         sizes: '180x180',
-                        type: 'image/png',
-                        purpose: 'any maskable'
-                    },
-                    {
-                        src: 'icons/langgar.png',
-                        sizes: '512x512',
                         type: 'image/png',
                         purpose: 'any maskable'
                     }
                 ]
             },
             workbox: {
+                navigateFallback: '/',
                 globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
                 runtimeCaching: [
                     {
@@ -58,7 +53,7 @@ export default defineConfig({
                             cacheName: 'google-fonts-cache',
                             expiration: {
                                 maxEntries: 10,
-                                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                                maxAgeSeconds: 60 * 60 * 24 * 365
                             },
                             cacheableResponse: {
                                 statuses: [0, 200]
@@ -72,7 +67,7 @@ export default defineConfig({
                             cacheName: 'gstatic-fonts-cache',
                             expiration: {
                                 maxEntries: 10,
-                                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                                maxAgeSeconds: 60 * 60 * 24 * 365
                             },
                             cacheableResponse: {
                                 statuses: [0, 200]
@@ -86,7 +81,7 @@ export default defineConfig({
                             cacheName: 'tailwindcss-cache',
                             expiration: {
                                 maxEntries: 10,
-                                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                                maxAgeSeconds: 60 * 60 * 24 * 30
                             },
                             cacheableResponse: {
                                 statuses: [0, 200]
@@ -103,3 +98,4 @@ export default defineConfig({
         },
     },
 });
+
