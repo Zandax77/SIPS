@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pelanggarans', function (Blueprint $table) {
-            $table->id();
-            $table->integer('id_siswa');
-            $table->integer('id_jenis_pelanggaran');
-            $table->string('deskripsi')->nullable();
-            $table->integer('id_petugas');
-            $table->timestamps();
+        Schema::table('tindakan_siswas', function (Blueprint $table) {
+            $table->string('bukti_foto')->nullable()->after('catatan_hasil');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pelanggarans');
+        Schema::table('tindakan_siswas', function (Blueprint $table) {
+            $table->dropColumn('bukti_foto');
+        });
     }
 };

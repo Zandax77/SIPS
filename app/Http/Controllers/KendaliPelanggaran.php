@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pelanggaran;
 use App\Models\JenisPelanggaran;
 use App\Models\KategoriPelanggaran;
+use App\Models\TindakanSiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -154,13 +155,23 @@ class KendaliPelanggaran extends Controller
      */
     public function catatPelanggaran(Request $request)
     {
+        // Kepala Sekolah cannot record violations
+        if (session('jabatan') === 'Kepala Sekolah') {
+            return redirect()->back()->with('error', 'Kepala Sekolah tidak dapat mencatat pelanggaran.');
+        }
+
         // Check violation category first for validation
         $jenisPelanggaran = DB::table('jenis_pelanggarans')
             ->join('kategori_pelanggarans', 'jenis_pelanggarans.id_kategori_pelanggaran', '=', 'kategori_pelanggarans.id')
+            ->select(
+                'jenis_pelanggarans.*',
+                'kategori_pelanggarans.nama as kategori',
+                'kategori_pelanggarans.poin'
+            )
             ->where('jenis_pelanggarans.id', $request->id_jenis_pelanggaran)
             ->first();
 
-        $kategoriName = $jenisPelanggaran->nama ?? '';
+        $kategoriName = $jenisPelanggaran->kategori ?? '';
         $requiresBukti = in_array($kategoriName, ['Berat', 'Sedang']);
 
         // Validasi
@@ -220,6 +231,23 @@ class KendaliPelanggaran extends Controller
         $pelanggaran->bukti_foto = $buktiFotoPath;
         $pelanggaran->save();
 
+        // Auto-create TindakanSiswa record so it appears in action history
+        $deskripsiTindakan = "Pelanggaran: {$jenisPelanggaran->nama} ({$jenisPelanggaran->poin} poin - {$jenisPelanggaran->kategori})";
+        if ($request->input('deskripsi')) {
+            $deskripsiTindakan .= "\nDeskripsi: " . $request->input('deskripsi');
+        }
+
+        $tindakan = new TindakanSiswa();
+        $tindakan->id_siswa = $request->input('id_siswa');
+        $tindakan->id_petugas = $id_petugas;
+        $tindakan->jenis_tindakan = 'Pencatatan Pelanggaran: ' . $jenisPelanggaran->nama;
+        $tindakan->deskripsi_tindakan = $deskripsiTindakan;
+        $tindakan->hasil_tindakan = 'Sedang Berlangsung';
+        $tindakan->catatan_hasil = 'Pelanggaran otomatis tercatat. Menunggu tindak lanjut dari Wali Kelas.';
+        $tindakan->bukti_foto = $buktiFotoPath; // Reference same file from pelanggaran
+        $tindakan->tanggal_tindakan = date('Y-m-d');
+        $tindakan->save();
+
         // Get siswa name untuk notifikasi
         $siswa = DB::table('siswas')->where('id', $request->id_siswa)->first();
 
@@ -276,14 +304,16 @@ class KendaliPelanggaran extends Controller
             return response()->json(['error' => 'Siswa tidak ditemukan'], 404);
         }
 
-        // Get total poin
-        $totalPoin = DB::table('pelanggarans')
+        // Get total poin (after prestasi reduction)
+        $totalPoinKotor = DB::table('pelanggarans')
             ->join('jenis_pelanggarans', 'pelanggarans.id_jenis_pelanggaran', '=', 'jenis_pelanggarans.id')
             ->join('kategori_pelanggarans', 'jenis_pelanggarans.id_kategori_pelanggaran', '=', 'kategori_pelanggarans.id')
             ->where('pelanggarans.id_siswa', $id)
             ->sum('kategori_pelanggarans.poin');
 
-        $siswa->total_poin = $totalPoin;
+        $totalPenguranganPoin = \App\Models\Prestasi::getTotalPenguranganPoin($id);
+        $siswa->total_poin = max(0, $totalPoinKotor - $totalPenguranganPoin);
+        $siswa->total_pengurangan_poin = $totalPenguranganPoin;
 
         return response()->json($siswa);
     }
@@ -490,6 +520,112 @@ class KendaliPelanggaran extends Controller
             'rekapPerSiswa',
             'totalPoin',
             'totalPelanggaran'
+        ));
+    }
+
+    /**
+     * Display data siswa yang melanggar berdasarkan laporan terkini
+     * dengan pencarian berdasarkan range tanggal
+     */
+    public function laporanSiswa(Request $request)
+    {
+        // Cek session
+        if (!session()->has('id_petugas')) {
+            return redirect()->route('login');
+        }
+
+        $namaPetugas = session('nama_petugas', 'Petugas');
+        $jabatan = $this->getFormattedJabatan();
+        $kelasWali = $this->getWaliKelas();
+
+        // Get filters
+        $tanggalMulai = $request->input('tanggal_mulai', date('Y-m-01'));
+        $tanggalAkhir = $request->input('tanggal_akhir', date('Y-m-t'));
+        $search = $request->input('search', '');
+
+        // Validate date range
+        if (strtotime($tanggalAkhir) < strtotime($tanggalMulai)) {
+            return redirect()->route('pelanggaran.laporan.siswa')
+                ->with('error', 'Tanggal akhir tidak boleh lebih awal dari tanggal mulai.');
+        }
+
+        // Rekap per siswa (grouped)
+        $rekapSiswa = DB::table('pelanggarans')
+            ->select(
+                'siswas.id',
+                'siswas.nis',
+                'siswas.name as nama_siswa',
+                'siswas.kelas',
+                DB::raw('COUNT(pelanggarans.id) as jumlah_pelanggaran'),
+                DB::raw('SUM(kategori_pelanggarans.poin) as total_poin'),
+                DB::raw('SUM(CASE WHEN kategori_pelanggarans.nama = "Ringan" THEN 1 ELSE 0 END) as jumlah_ringan'),
+                DB::raw('SUM(CASE WHEN kategori_pelanggarans.nama = "Sedang" THEN 1 ELSE 0 END) as jumlah_sedang'),
+                DB::raw('SUM(CASE WHEN kategori_pelanggarans.nama = "Berat" THEN 1 ELSE 0 END) as jumlah_berat')
+            )
+            ->join('siswas', 'pelanggarans.id_siswa', '=', 'siswas.id')
+            ->join('jenis_pelanggarans', 'pelanggarans.id_jenis_pelanggaran', '=', 'jenis_pelanggarans.id')
+            ->join('kategori_pelanggarans', 'jenis_pelanggarans.id_kategori_pelanggaran', '=', 'kategori_pelanggarans.id')
+            ->whereBetween('pelanggarans.created_at', [$tanggalMulai . ' 00:00:00', $tanggalAkhir . ' 23:59:59'])
+            ->when($search, function ($query) use ($search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('siswas.name', 'like', "%{$search}%")
+                      ->orWhere('siswas.nis', 'like', "%{$search}%");
+                });
+            })
+            ->when($kelasWali, function ($query) use ($kelasWali) {
+                return $query->where('siswas.kelas', $kelasWali);
+            })
+            ->groupBy('siswas.id', 'siswas.nis', 'siswas.name', 'siswas.kelas')
+            ->orderByDesc('total_poin')
+            ->get();
+
+        // Detail pelanggaran in the date range
+        $pelanggaranData = DB::table('pelanggarans')
+            ->select(
+                'pelanggarans.id',
+                'siswas.nis',
+                'siswas.name as nama_siswa',
+                'siswas.kelas',
+                'jenis_pelanggarans.nama as jenis_pelanggaran',
+                'kategori_pelanggarans.nama as kategori',
+                'kategori_pelanggarans.poin',
+                'pelanggarans.deskripsi',
+                'petugas.name as nama_petugas',
+                'pelanggarans.created_at'
+            )
+            ->join('siswas', 'pelanggarans.id_siswa', '=', 'siswas.id')
+            ->join('jenis_pelanggarans', 'pelanggarans.id_jenis_pelanggaran', '=', 'jenis_pelanggarans.id')
+            ->join('kategori_pelanggarans', 'jenis_pelanggarans.id_kategori_pelanggaran', '=', 'kategori_pelanggarans.id')
+            ->join('petugas', 'pelanggarans.id_petugas', '=', 'petugas.id')
+            ->whereBetween('pelanggarans.created_at', [$tanggalMulai . ' 00:00:00', $tanggalAkhir . ' 23:59:59'])
+            ->when($search, function ($query) use ($search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('siswas.name', 'like', "%{$search}%")
+                      ->orWhere('siswas.nis', 'like', "%{$search}%");
+                });
+            })
+            ->when($kelasWali, function ($query) use ($kelasWali) {
+                return $query->where('siswas.kelas', $kelasWali);
+            })
+            ->orderBy('pelanggarans.created_at', 'desc')
+            ->get();
+
+        // Totals
+        $totalSiswaMelanggar = $rekapSiswa->count();
+        $totalPelanggaran = $pelanggaranData->count();
+        $totalPoin = $pelanggaranData->sum('poin');
+
+        return view('data-siswa-melanggar', compact(
+            'namaPetugas',
+            'jabatan',
+            'tanggalMulai',
+            'tanggalAkhir',
+            'search',
+            'rekapSiswa',
+            'pelanggaranData',
+            'totalSiswaMelanggar',
+            'totalPelanggaran',
+            'totalPoin'
         ));
     }
 }

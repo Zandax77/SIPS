@@ -14,6 +14,7 @@ class TindakanSiswa extends Model
         'deskripsi_tindakan',
         'hasil_tindakan',
         'catatan_hasil',
+        'bukti_foto',
         'tanggal_tindakan'
     ];
 

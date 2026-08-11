@@ -299,12 +299,15 @@
 
                     <!-- Total Poin -->
                     <div class="flex flex-col items-end">
-                        <p class="text-sm text-gray-500">Total Poin</p>
-                        <p class="text-4xl font-bold <?php echo e($totalPoin > 10 ? 'text-rose-600' : ($totalPoin > 0 ? 'text-amber-600' : 'text-emerald-600')); ?>">
-                            <?php echo e($totalPoin); ?>
+                        <p class="text-sm text-gray-500">Total Poin Pelanggaran</p>
+                        <p class="text-4xl font-bold <?php echo e($poinEfektif > 10 ? 'text-rose-600' : ($poinEfektif > 0 ? 'text-amber-600' : 'text-emerald-600')); ?>">
+                            <?php echo e($poinEfektif); ?>
 
                         </p>
                         <p class="text-sm text-gray-400">poin</p>
+                        <?php if($totalPenguranganPoin > 0): ?>
+                            <p class="text-xs text-emerald-600 mt-1">(<?php echo e($totalPoin); ?> - <?php echo e($totalPenguranganPoin); ?> poin prestasi)</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -382,6 +385,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
+                            <?php if(session('jabatan') !== 'Kepala Sekolah'): ?>
                             <button onclick="document.getElementById('tindakanModal').classList.remove('hidden')" 
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -389,6 +393,7 @@
                                 </svg>
                                 Catat Tindakan
                             </button>
+                            <?php endif; ?>
                             <a href="<?php echo e(route('siswa.tindakan.cetak', $siswa->id)); ?>" target="_blank" class="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center gap-2 text-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
@@ -437,12 +442,23 @@
                                     <?php if($tindakan->catatan_hasil): ?>
                                     <p class="text-sm text-gray-500 italic">Catatan: <?php echo e($tindakan->catatan_hasil); ?></p>
                                     <?php endif; ?>
+                                    <?php if($tindakan->bukti_foto): ?>
+                                    <div class="mt-2">
+                                        <button onclick="showTindakanEvidence('<?php echo e($tindakan->bukti_foto); ?>')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Lihat Bukti
+                                        </button>
+                                    </div>
+                                    <?php endif; ?>
                                     <div class="flex items-center gap-4 mt-2 text-xs text-gray-500">
                                         <span>Tanggal: <?php echo e(\Carbon\Carbon::parse($tindakan->tanggal_tindakan)->format('d/m/Y')); ?></span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <button onclick="editTindakan(<?php echo e($tindakan->id); ?>, '<?php echo e($tindakan->jenis_tindakan); ?>', '<?php echo e($tindakan->deskripsi_tindakan); ?>', '<?php echo e($tindakan->hasil_tindakan); ?>', '<?php echo e($tindakan->catatan_hasil); ?>', '<?php echo e($tindakan->tanggal_tindakan); ?>')" class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
+                                    <?php if(session('jabatan') !== 'Kepala Sekolah'): ?>
+                                    <button onclick="editTindakan(<?php echo e($tindakan->id); ?>, '<?php echo e($tindakan->jenis_tindakan); ?>', '<?php echo e($tindakan->deskripsi_tindakan); ?>', '<?php echo e($tindakan->hasil_tindakan); ?>', '<?php echo e($tindakan->catatan_hasil); ?>', '<?php echo e($tindakan->tanggal_tindakan); ?>', '<?php echo e($tindakan->bukti_foto ?? ''); ?>')" class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
@@ -456,6 +472,7 @@
                                             </svg>
                                         </button>
                                     </form>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -467,6 +484,110 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
                         <p class="mt-4 text-gray-500">Belum ada tindakan yang dicatat</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Prestasi Section -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg shadow-gray-200/50 border border-emerald-100 mb-6 animate-fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800">Prestasi Siswa</h3>
+                            <p class="text-sm text-gray-500">Catatan prestasi akademik & non akademik</p>
+                        </div>
+                    </div>
+                    <?php if(session('jabatan') !== 'Kepala Sekolah'): ?>
+                    <a href="<?php echo e(route('prestasi.create', ['siswa_id' => $siswa->id])); ?>" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Tambah Prestasi
+                    </a>
+                    <?php endif; ?>
+                </div>
+
+                <?php if(isset($prestasiSiswa) && count($prestasiSiswa) > 0): ?>
+                    <div class="space-y-4">
+                        <?php $__currentLoopData = $prestasiSiswa; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prestasi): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                        <span class="font-semibold text-gray-800"><?php echo e($prestasi->nama_prestasi); ?></span>
+                                        <?php if($prestasi->bidang == 'Akademik'): ?>
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-700">Akademik</span>
+                                        <?php else: ?>
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">Non Akademik</span>
+                                        <?php endif; ?>
+                                        <?php
+                                            $tingkatColors = [
+                                                'Sekolah' => 'bg-green-100 text-green-700',
+                                                'Kecamatan' => 'bg-blue-100 text-blue-700',
+                                                'Kabupaten' => 'bg-indigo-100 text-indigo-700',
+                                                'Provinsi' => 'bg-purple-100 text-purple-700',
+                                                'Nasional' => 'bg-rose-100 text-rose-700',
+                                            ];
+                                            $tColor = $tingkatColors[$prestasi->tingkat] ?? 'bg-gray-100 text-gray-700';
+                                        ?>
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-medium <?php echo e($tColor); ?>"><?php echo e($prestasi->tingkat); ?></span>
+                                    </div>
+                                    <?php if($prestasi->peringkat): ?>
+                                        <p class="text-sm text-gray-700"><span class="font-medium">Peringkat:</span> <?php echo e($prestasi->peringkat); ?></p>
+                                    <?php endif; ?>
+                                    <?php if($prestasi->deskripsi): ?>
+                                        <p class="text-sm text-gray-600 mt-1"><?php echo e($prestasi->deskripsi); ?></p>
+                                    <?php endif; ?>
+                                    <?php if($prestasi->pengurangan_poin > 0): ?>
+                                        <div class="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-sm font-medium">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                                            </svg>
+                                            Pengurangan Poin: <?php echo e($prestasi->pengurangan_poin); ?>
+
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if($prestasi->bukti_foto): ?>
+                                        <div class="mt-2">
+                                            <?php
+                                                $extension = pathinfo($prestasi->bukti_foto, PATHINFO_EXTENSION);
+                                                $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
+                                            ?>
+                                            <?php if($isImage): ?>
+                                                <img src="<?php echo e(asset('storage/' . $prestasi->bukti_foto)); ?>" alt="Bukti Prestasi" class="w-32 h-24 object-cover rounded-lg border border-gray-200 mt-2">
+                                            <?php else: ?>
+                                                <a href="<?php echo e(asset('storage/' . $prestasi->bukti_foto)); ?>" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    Lihat Dokumen
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <p class="text-xs text-gray-400 mt-2"><?php echo e(\Carbon\Carbon::parse($prestasi->tanggal_prestasi)->format('d/m/Y')); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center py-8 bg-gray-50 rounded-xl">
+                        <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                        <p class="mt-4 text-gray-500">Belum ada prestasi yang dicatat</p>
+                        <a href="<?php echo e(route('prestasi.create', ['siswa_id' => $siswa->id])); ?>" class="mt-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium inline-flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Catat prestasi baru
+                        </a>
                     </div>
                 <?php endif; ?>
             </div>
@@ -679,6 +800,85 @@
     </div>
 
     <script>
+        // File upload preview
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('bukti_foto');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file) {
+                        document.getElementById('filePreview').classList.add('hidden');
+                        return;
+                    }
+
+                    const preview = document.getElementById('filePreview');
+                    const previewImage = document.getElementById('previewImage');
+                    const fileIcon = document.getElementById('fileIconPlaceholder');
+
+                    preview.classList.remove('hidden');
+
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(ev) {
+                            previewImage.src = ev.target.result;
+                            previewImage.classList.remove('hidden');
+                            fileIcon.classList.add('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        previewImage.classList.add('hidden');
+                        previewImage.src = '';
+                        fileIcon.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+
+        function removeFile() {
+            const fileInput = document.getElementById('bukti_foto');
+            fileInput.value = '';
+            document.getElementById('filePreview').classList.add('hidden');
+            document.getElementById('previewImage').classList.add('hidden');
+            document.getElementById('previewImage').src = '';
+            document.getElementById('fileIconPlaceholder').classList.remove('hidden');
+        }
+
+        // Tindakan Evidence Modal
+        function showTindakanEvidence(path) {
+            const modal = document.getElementById('tindakanEvidenceModal');
+            const content = document.getElementById('tindakanEvidenceContent');
+            
+            const extension = path.split('.').pop().toLowerCase();
+            const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(extension);
+
+            let html = '';
+            if (isImage) {
+                html = `
+                    <div class="flex flex-col items-center">
+                        <img src="/storage/${path}" alt="Bukti Tindakan" class="max-w-full max-h-[70vh] rounded-lg shadow-lg">
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="flex flex-col items-center justify-center h-full">
+                        <svg class="w-24 h-24 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="mt-4 text-lg font-medium text-gray-700 uppercase">${extension} Document</p>
+                        <a href="/storage/${path}" target="_blank" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Buka File</a>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+        }
+
+        function closeTindakanEvidenceModal() {
+            document.getElementById('tindakanEvidenceModal').classList.add('hidden');
+            document.getElementById('tindakanEvidenceContent').innerHTML = '';
+        }
+
         // Store violations data for single modal
         const violationsData = <?php echo json_encode($pelanggaranDetail->keyBy('id'), 15, 512) ?>;
 
@@ -751,7 +951,7 @@
         }
 
         // Action Modal Functions
-        function editTindakan(id, jenis, deskripsi, hasil, catatan, tanggal) {
+        function editTindakan(id, jenis, deskripsi, hasil, catatan, tanggal, buktiFoto) {
             document.getElementById('tindakan-modal-title').textContent = 'Edit Tindakan';
             document.getElementById('tindakan-form').action = `/siswa/<?php echo e($siswa->id); ?>/tindakan/${id}`;
             document.getElementById('tindakan-method').value = 'PUT';
@@ -760,6 +960,28 @@
             document.getElementById('hasil_tindakan').value = hasil;
             document.getElementById('catatan_hasil').value = catatan || '';
             document.getElementById('tanggal_tindakan').value = tanggal;
+
+            // Show existing file info
+            if (buktiFoto) {
+                const preview = document.getElementById('filePreview');
+                const previewImage = document.getElementById('previewImage');
+                const fileIcon = document.getElementById('fileIconPlaceholder');
+                
+                preview.classList.remove('hidden');
+                const extension = buktiFoto.split('.').pop().toLowerCase();
+                const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(extension);
+                
+                if (isImage) {
+                    previewImage.src = `/storage/${buktiFoto}`;
+                    previewImage.classList.remove('hidden');
+                    fileIcon.classList.add('hidden');
+                } else {
+                    previewImage.classList.add('hidden');
+                    previewImage.src = '';
+                    fileIcon.classList.remove('hidden');
+                }
+            }
+
             document.getElementById('tindakanModal').classList.remove('hidden');
         }
 
@@ -774,6 +996,8 @@
             document.getElementById('hasil_tindakan').value = 'Sedang Berlangsung';
             document.getElementById('catatan_hasil').value = '';
             document.getElementById('tanggal_tindakan').value = new Date().toISOString().split('T')[0];
+            // Reset file input
+            removeFile();
         }
     </script>
 
@@ -802,7 +1026,7 @@
             
             <!-- Modal Body -->
             <div class="flex-1 overflow-y-auto p-6">
-                <form id="tindakan-form" action="<?php echo e(route('siswa.tindakan.store', ['id' => $siswa->id])); ?>" method="POST">
+                <form id="tindakan-form" action="<?php echo e(route('siswa.tindakan.store', ['id' => $siswa->id])); ?>" method="POST" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
                     <input type="hidden" id="tindakan-method" name="_method" value="POST">
                     
@@ -849,6 +1073,33 @@
                         </div>
 
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Bukti Foto/Dokumen</label>
+                            <div class="mt-1 flex items-start gap-4">
+                                <div class="flex-1">
+                                    <div class="relative">
+                                        <input type="file" id="bukti_foto" name="bukti_foto" accept="image/jpeg,image/jpg,image/png,image/gif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all outline-none file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-400">Format: JPEG, JPG, PNG, GIF, PDF, DOC, DOCX. Maks: 2MB</p>
+                                </div>
+                                <div id="filePreview" class="hidden flex-shrink-0">
+                                    <div class="relative w-20 h-20 rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+                                        <img id="previewImage" src="" alt="Preview" class="w-full h-full object-cover hidden">
+                                        <div id="fileIconPlaceholder" class="w-full h-full flex items-center justify-center">
+                                            <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <button type="button" onclick="removeFile()" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center shadow hover:bg-rose-600 transition-colors">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Tindakan <span class="text-rose-500">*</span></label>
                             <input type="date" id="tanggal_tindakan" name="tanggal_tindakan" required value="<?php echo e(date('Y-m-d')); ?>" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all outline-none">
                         </div>
@@ -866,7 +1117,34 @@
             </div>
         </div>
     </div>
+    <!-- Tindakan Evidence Modal -->
+    <div id="tindakanEvidenceModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeTindakanEvidenceModal()"></div>
+        <div class="absolute inset-4 md:inset-20 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Bukti Tindakan</h3>
+                        <p class="text-sm text-gray-500">Dokumen/Foto bukti tindakan</p>
+                    </div>
+                </div>
+                <button onclick="closeTindakanEvidenceModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto p-6" id="tindakanEvidenceContent">
+                <!-- Content loaded via JS -->
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
-<?php /**PATH /Users/abscom23/Desktop/SIPS/resources/views/siswa-poin-detail.blade.php ENDPATH**/ ?>
+<?php /**PATH /Users/abscom23/Documents/SIPS/resources/views/siswa-poin-detail.blade.php ENDPATH**/ ?>

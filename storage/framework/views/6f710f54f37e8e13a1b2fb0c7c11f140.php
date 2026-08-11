@@ -729,4 +729,4 @@ unset($__errorArgs, $__bag); ?>
 </body>
 </html>
 
-<?php /**PATH /Users/abscom23/Desktop/SIPS/resources/views/catat-pelanggaran.blade.php ENDPATH**/ ?>
+<?php /**PATH /Users/abscom23/Documents/SIPS/resources/views/catat-pelanggaran.blade.php ENDPATH**/ ?>

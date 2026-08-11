@@ -13,6 +13,8 @@ class Sekolah extends Model
         'nama_sekolah',
         'alamat_sekolah',
         'logo_sekolah',
+        'nama_kepala_sekolah',
+        'nip_kepala_sekolah',
     ];
 
     protected $appends = ['logo_url', 'logo_base64'];

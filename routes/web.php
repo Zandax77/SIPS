@@ -6,6 +6,7 @@ use App\Http\Controllers\KendaliSiswa;
 use App\Http\Controllers\KendaliPelanggaran;
 use App\Http\Controllers\KendaliJenisPelanggaran;
 use App\Http\Controllers\KendaliAdmin;
+use App\Http\Controllers\KendaliPrestasi;
 use Illuminate\Support\Facades\Route;
 
 // Splash Screen Route (First page when app launches)
@@ -46,9 +47,19 @@ Route::middleware(['auth:petugas'])->group(function () {
     Route::delete('/admin/petugas/{id}', [KendaliAdmin::class, 'delete'])->name('admin.petugas.delete');
 
     // Admin: Kelola Sekolah (Admin only)
-    Route::get('/admin/sekolah', [KendaliAdmin::class, 'sekolah'])->name('admin.sekolah.index');
+    Route::get('/admin/sekolah', [KendaliAdmin::class, 'sekolahAccount'])->name('admin.sekolah.index');
     Route::post('/admin/sekolah', [KendaliAdmin::class, 'updateSekolah'])->name('admin.sekolah.update');
     Route::post('/admin/sekolah/delete-logo', [KendaliAdmin::class, 'deleteLogo'])->name('admin.sekolah.delete-logo');
+
+    // Admin: Kelola Akun Kepala Sekolah
+    Route::post('/admin/sekolah/kepsek/create', [KendaliAdmin::class, 'createAkunKepalaSekolah'])->name('admin.sekolah.kepsek.create');
+    Route::post('/admin/sekolah/kepsek/reset-password', [KendaliAdmin::class, 'resetPasswordKepalaSekolah'])->name('admin.sekolah.kepsek.reset-password');
+    Route::post('/admin/sekolah/kepsek/delete', [KendaliAdmin::class, 'deleteAkunKepalaSekolah'])->name('admin.sekolah.kepsek.delete');
+
+    // Admin: Import Data Siswa
+    Route::get('/admin/siswa/import', [KendaliAdmin::class, 'importSiswaForm'])->name('admin.siswa.import.form');
+    Route::post('/admin/siswa/import', [KendaliAdmin::class, 'importSiswaAction'])->name('admin.siswa.import.action');
+    Route::get('/admin/siswa/import/template', [KendaliAdmin::class, 'downloadTemplate'])->name('admin.siswa.import.template');
 
     // Menu: Data Siswa & Poin
     Route::get('/siswa/poin', [KendaliSiswa::class, 'index'])->name('siswa.poin');
@@ -65,6 +76,9 @@ Route::middleware(['auth:petugas'])->group(function () {
     // Laporan Pelanggaran Per Kelas (BK)
     Route::get('/pelanggaran/laporan/kelas', [KendaliPelanggaran::class, 'laporanKelas'])->name('pelanggaran.laporan.kelas');
     Route::get('/pelanggaran/laporan/kelas/cetak', [KendaliPelanggaran::class, 'cetakLaporanKelas'])->name('pelanggaran.laporan.kelas.cetak');
+
+    // Data Siswa Melanggar (Berdasarkan Range Tanggal)
+    Route::get('/pelanggaran/laporan/siswa', [KendaliPelanggaran::class, 'laporanSiswa'])->name('pelanggaran.laporan.siswa');
 
     // Menu: Jenis Pelanggaran
     Route::get('/jenis-pelanggaran', [KendaliJenisPelanggaran::class, 'index'])->name('jenis.pelanggaran');
@@ -89,4 +103,16 @@ Route::middleware(['auth:petugas'])->group(function () {
 
     // Print & Export: Riwayat Tindakan
     Route::get('/siswa/{id}/tindakan/cetak', [KendaliSiswa::class, 'cetakTindakan'])->name('siswa.tindakan.cetak');
+
+    // Menu: Prestasi Siswa (Kesiswaan & Admin)
+    Route::get('/prestasi', [KendaliPrestasi::class, 'index'])->name('prestasi.index');
+    Route::get('/prestasi/tambah', [KendaliPrestasi::class, 'create'])->name('prestasi.create');
+    Route::post('/prestasi/store', [KendaliPrestasi::class, 'store'])->name('prestasi.store');
+    Route::get('/prestasi/{id}/edit', [KendaliPrestasi::class, 'edit'])->name('prestasi.edit');
+    Route::put('/prestasi/{id}', [KendaliPrestasi::class, 'update'])->name('prestasi.update');
+    Route::delete('/prestasi/{id}', [KendaliPrestasi::class, 'destroy'])->name('prestasi.destroy');
+
+    // Prestasi: API
+    Route::get('/api/prestasi/search-siswa', [KendaliPrestasi::class, 'searchSiswa'])->name('api.prestasi.search-siswa');
+    Route::get('/api/prestasi/siswa/{id}', [KendaliPrestasi::class, 'getBySiswa'])->name('api.prestasi.siswa');
 });

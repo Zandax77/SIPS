@@ -165,13 +165,23 @@
                     </a>
                     @endif
 
-                    <!-- Active: Kelola Sekolah -->
+                <!-- Kelola Sekolah (Active) -->
                     <a href="{{ route('admin.sekolah.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
                         <span class="font-medium">Kelola Sekolah</span>
                     </a>
+
+                    @if($jabatanRaw ?? '' === 'Kepala Sekolah')
+                    <!-- Prestasi (Kepala Sekolah) -->
+                    <a href="{{ route('prestasi.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                        <span class="font-medium">Prestasi Siswa</span>
+                    </a>
+                    @endif
 
                     <a href="{{ route('password.change.form') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,6 +290,43 @@
                                         placeholder="Contoh: Jl. Merdeka No. 1, Jakarta Pusat"
                                     >{{ old('alamat_sekolah', $sekolah->alamat_sekolah) }}</textarea>
                                     @error('alamat_sekolah')
+                                        <p class="mt-1 text-sm text-rose-500">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Nama Kepala Sekolah -->
+                                <div>
+                                    <label for="nama_kepala_sekolah" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Nama Kepala Sekolah
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="nama_kepala_sekolah" 
+                                        id="nama_kepala_sekolah" 
+                                        value="{{ old('nama_kepala_sekolah', $sekolah->nama_kepala_sekolah) }}"
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all @error('nama_kepala_sekolah') border-rose-500 @enderror"
+                                        placeholder="Contoh: Drs. H. Ahmad Suherman, M.Pd."
+                                    >
+                                    @error('nama_kepala_sekolah')
+                                        <p class="mt-1 text-sm text-rose-500">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- NIP Kepala Sekolah -->
+                                <div>
+                                    <label for="nip_kepala_sekolah" class="block text-sm font-medium text-gray-700 mb-2">
+                                        NIP Kepala Sekolah
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="nip_kepala_sekolah" 
+                                        id="nip_kepala_sekolah" 
+                                        value="{{ old('nip_kepala_sekolah', $sekolah->nip_kepala_sekolah) }}"
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all @error('nip_kepala_sekolah') border-rose-500 @enderror"
+                                        placeholder="Contoh: 196501011990031005"
+                                        maxlength="30"
+                                    >
+                                    @error('nip_kepala_sekolah')
                                         <p class="mt-1 text-sm text-rose-500">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -431,6 +478,119 @@
                     </div>
                 </div>
             </main>
+
+            <!-- Akun Kepala Sekolah Section -->
+            <div class="max-w-7xl w-full mx-auto px-4 py-8">
+                <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden animate-fade-in">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-amber-50 to-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800">Akun Kepala Sekolah</h2>
+                                <p class="text-sm text-gray-500">Akun login untuk Kepala Sekolah mengakses sistem SIPS</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        @if($akun)
+                            <!-- Account exists -->
+                            <div class="flex items-start gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                                <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-800">{{ $akun->name }}</p>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <span class="font-medium">Email:</span> {{ $akun->email }}
+                                    </p>
+                                    <p class="text-sm text-gray-600">
+                                        <span class="font-medium">Status:</span>
+                                        @if($akun->status === 'active')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">Aktif</span>
+                                        @elseif($akun->status === 'blocked')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700">Terblokir</span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">Tidak Aktif</span>
+                                        @endif
+                                    </p>
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        <span class="font-medium">Password default:</span> <code class="bg-gray-100 px-2 py-0.5 rounded text-xs font-mono">12345678</code>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-4 flex flex-wrap gap-3">
+                                <form action="{{ route('admin.sekolah.kepsek.reset-password') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 text-sm" onclick="return confirm('Reset password akun Kepala Sekolah menjadi 12345678?')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                                        </svg>
+                                        Reset Password
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.sekolah.kepsek.delete') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="px-4 py-2 bg-rose-600 text-white font-medium rounded-xl hover:bg-rose-700 transition-colors shadow-sm flex items-center gap-2 text-sm" onclick="return confirm('Hapus akun Kepala Sekolah? Tindakan ini tidak dapat dibatalkan.')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        Hapus Akun
+                                    </button>
+                                </form>
+                            </div>
+                        @else
+                            <!-- No account yet -->
+                            <div class="flex items-start gap-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                                <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-800">Belum ada akun Kepala Sekolah</p>
+                                    <p class="text-sm text-gray-600 mt-1">Buat akun login agar Kepala Sekolah dapat mengakses sistem SIPS.</p>
+                                    <p class="text-sm text-gray-500 mt-2">
+                                        Akun akan dibuat dengan:
+                                    </p>
+                                    <ul class="mt-1 text-sm text-gray-500 space-y-1">
+                                        <li>• Nama: <strong>{{ $sekolah->nama_kepala_sekolah ?: 'Kepala Sekolah ' . $sekolah->nama_sekolah }}</strong></li>
+                                        <li>• Email: <strong>kepsek.{{ \Illuminate\Support\Str::slug($sekolah->nama_sekolah ?: 'sekolah') }}@sips.sch.id</strong></li>
+                                        <li>• Password default: <code class="bg-gray-100 px-2 py-0.5 rounded text-xs font-mono">12345678</code></li>
+                                    </ul>
+                                    <form action="{{ route('admin.sekolah.kepsek.create') }}" method="POST" class="mt-4">
+                                        @csrf
+                                        <button type="submit" class="px-5 py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 flex items-center gap-2 text-sm">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                            </svg>
+                                            Buat Akun Kepala Sekolah
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Info Note -->
+                        <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                            <p class="text-xs text-blue-700 flex items-start gap-2">
+                                <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Akun Kepala Sekolah dibuat dengan status aktif langsung. Password default <code class="bg-blue-100 px-1 rounded">12345678</code>. Silakan ubah password setelah login pertama.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Footer -->
             <footer class="bg-white/60 backdrop-blur-sm border-t border-gray-100 py-4">

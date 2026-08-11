@@ -78,9 +78,9 @@
         <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-100 rounded-full opacity-40 blur-3xl"></div>
     </div>
 
-    <!-- PWA Install Button - Always visible for testing -->
+    <!-- PWA Install Button - Hidden by default, shown when PWA is installable -->
     <button id="install-app-btn" 
-            class="fixed bottom-6 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-full shadow-lg shadow-indigo-300 hover:shadow-xl transition-all duration-300 flex items-center gap-2 font-medium">
+            class="hidden fixed bottom-6 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-full shadow-lg shadow-indigo-300 hover:shadow-xl transition-all duration-300 flex items-center gap-2 font-medium">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
         </svg>
@@ -191,20 +191,38 @@
                     </a>
                     <?php endif; ?>
 
-                    <!-- Menu: Catat Pelanggaran -->
+                    <!-- Menu: Catat Pelanggaran (Hidden for Kepala Sekolah) -->
+                    <?php if(($jabatanRaw ?? '') !== 'Kepala Sekolah'): ?>
                     <a href="<?php echo e(route('pelanggaran.catat')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         <span class="font-medium">Catat Pelanggaran</span>
                     </a>
+                    <?php endif; ?>
 
-                    <!-- Menu: Laporan BK (Per Kelas) -->
+<!-- Menu: Laporan BK (Per Kelas) -->
                     <a href="<?php echo e(route('pelanggaran.laporan.kelas')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m34m3  2v-4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         <span class="font-medium">Laporan BK</span>
+                    </a>
+
+                    <!-- Menu: Data Siswa Melanggar -->
+                    <a href="<?php echo e(route('pelanggaran.laporan.siswa')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <span class="font-medium">Data Siswa Melanggar</span>
+                    </a>
+
+                    <!-- Menu: Prestasi Siswa -->
+                    <a href="<?php echo e(route('prestasi.index')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                        <span class="font-medium">Prestasi Siswa</span>
                     </a>
 
                     <!-- Menu: Jenis Pelanggaran (Only for Kesiswaan, Guru BK, and Admin) -->
@@ -224,6 +242,16 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                         <span class="font-medium">Kelola Petugas</span>
+                    </a>
+                    <?php endif; ?>
+
+                    <!-- Menu: Import Data Siswa (Admin only) -->
+                    <?php if(($role ?? '') === 'admin'): ?>
+                    <a href="<?php echo e(route('admin.siswa.import.form')); ?>" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        <span class="font-medium">Import Data Siswa</span>
                     </a>
                     <?php endif; ?>
 
@@ -354,25 +382,33 @@
                     </div>
                 </div>
 
-                <!-- Table Section -->
+<!-- Table Section -->
                 <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden animate-fade-in delay-400">
                     <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-white">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-800">Siswa Melanggar Hari Ini</h2>
+                                    <p class="text-sm text-gray-500">Data pelanggaran siswa yang dilaporkan hari ini</p>
+                                </div>
+                            </div>
+                            <a href="<?php echo e(route('pelanggaran.laporan.siswa')); ?>" class="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+                                Lihat Semua
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                 </svg>
-                            </div>
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-800">Siswa Pelanggaran Berat</h2>
-                                <p class="text-sm text-gray-500">Data pelanggaran berat hari ini</p>
-                            </div>
+                            </a>
                         </div>
                     </div>
 
-                    <?php if(count($siswaPelanggaranBerat) > 0): ?>
+                    <?php if(count($siswaPelanggaranHariIni) > 0): ?>
                         <div class="overflow-x-auto -mx-6 max-h-96">
-                            <table class="w-full min-w-[600px]">
+                            <table class="w-full min-w-[700px]">
                                 <thead class="bg-gray-50 sticky top-0 z-10">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
@@ -380,12 +416,13 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kelas</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelanggaran</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
-                                    <?php $__currentLoopData = $siswaPelanggaranBerat; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__currentLoopData = $siswaPelanggaranHariIni; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr class="hover:bg-gray-50 transition-colors duration-150">
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?php echo e($index + 1); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo e($data->nis); ?></td>
@@ -397,8 +434,17 @@
 
                                                 </span>
                                             </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <?php if($data->kategori == 'Ringan'): ?>
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">Ringan</span>
+                                                <?php elseif($data->kategori == 'Sedang'): ?>
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Sedang</span>
+                                                <?php else: ?>
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-700">Berat</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" title="<?php echo e($data->deskripsi); ?>">
-                                                <?php echo e($data->deskripsi); ?>
+                                                <?php echo e($data->deskripsi ?: '-'); ?>
 
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -415,7 +461,7 @@
                             <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <p class="mt-4 text-gray-500">Tidak ada pelanggaran berat hari ini</p>
+                            <p class="mt-4 text-gray-500">Tidak ada pelanggaran hari ini</p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -656,4 +702,4 @@
 </body>
 </html>
 
-<?php /**PATH /Users/abscom23/Desktop/SIPS/resources/views/dashboard.blade.php ENDPATH**/ ?>
+<?php /**PATH /Users/abscom23/Documents/SIPS/resources/views/dashboard.blade.php ENDPATH**/ ?>

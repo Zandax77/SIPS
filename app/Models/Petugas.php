@@ -9,6 +9,8 @@ class Petugas extends Authenticatable
 {
     use Notifiable;
 
+    const JABATAN_KEPALA_SEKOLAH = 'Kepala Sekolah';
+
     protected $table = 'petugas';
 
     protected $fillable = [
@@ -39,6 +41,22 @@ class Petugas extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is Kepala Sekolah
+     */
+    public function isKepalaSekolah(): bool
+    {
+        return $this->jabatan === self::JABATAN_KEPALA_SEKOLAH;
+    }
+
+    /**
+     * Check if user is view-only (Kepala Sekolah who can only view reports)
+     */
+    public function isViewOnly(): bool
+    {
+        return $this->jabatan === self::JABATAN_KEPALA_SEKOLAH;
     }
 
     /**

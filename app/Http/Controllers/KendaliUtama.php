@@ -523,22 +523,30 @@ class KendaliUtama extends Controller
                 : 0;
         }
 
-        // 5. Get siswa dengan pelanggaran berat hari ini
-        $siswaPelanggaranBerat = [];
-        if (!empty($jenisBeratIds)) {
-            $siswaPelanggaranBeratQuery = DB::table('pelanggarans')
-                ->select('siswas.nis', 'siswas.name as nama_siswa', 'siswas.kelas', 'jenis_pelanggarans.nama as pelanggaran', 'pelanggarans.created_at', 'pelanggarans.deskripsi')
-                ->join('siswas', 'pelanggarans.id_siswa', '=', 'siswas.id')
-                ->join('jenis_pelanggarans', 'pelanggarans.id_jenis_pelanggaran', '=', 'jenis_pelanggarans.id')
-                ->whereDate('pelanggarans.created_at', $today)
-                ->whereIn('jenis_pelanggarans.id_kategori_pelanggaran', $kategoriBeratIds)
-                ->when($kelasWali, function ($query) use ($kelasWali) {
-                    return $query->where('siswas.kelas', $kelasWali);
-                })
-                ->orderBy('pelanggarans.created_at', 'desc');
+// 5. Get siswa yang melanggar hari ini (semua kategori)
+        $siswaPelanggaranHariIni = DB::table('pelanggarans')
+            ->select(
+                'siswas.nis',
+                'siswas.name as nama_siswa',
+                'siswas.kelas',
+                'jenis_pelanggarans.nama as pelanggaran',
+                'kategori_pelanggarans.nama as kategori',
+                'kategori_pelanggarans.poin',
+                'pelanggarans.created_at',
+                'pelanggarans.deskripsi'
+            )
+            ->join('siswas', 'pelanggarans.id_siswa', '=', 'siswas.id')
+            ->join('jenis_pelanggarans', 'pelanggarans.id_jenis_pelanggaran', '=', 'jenis_pelanggarans.id')
+            ->join('kategori_pelanggarans', 'jenis_pelanggarans.id_kategori_pelanggaran', '=', 'kategori_pelanggarans.id')
+            ->whereDate('pelanggarans.created_at', $today)
+            ->when($kelasWali, function ($query) use ($kelasWali) {
+                return $query->where('siswas.kelas', $kelasWali);
+            })
+            ->orderBy('pelanggarans.created_at', 'desc')
+            ->get();
 
-            $siswaPelanggaranBerat = $siswaPelanggaranBeratQuery->get();
-        }
+        // Get siswa unik yang melanggar hari ini (untuk hitung jumlah siswa)
+        $jumlahSiswaMelanggarHariIni = $siswaPelanggaranHariIni->unique('nis')->count();
 
         // 6. Get school information
         $sekolah = Sekolah::getOrCreate();
@@ -553,8 +561,9 @@ class KendaliUtama extends Controller
             'countSedang',
             'countBerat',
             'chartData',
-            'dates',
-            'siswaPelanggaranBerat',
+'dates',
+            'siswaPelanggaranHariIni',
+            'jumlahSiswaMelanggarHariIni',
             'sekolah'
         ));
     }

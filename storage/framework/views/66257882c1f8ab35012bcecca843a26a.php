@@ -183,4 +183,4 @@
 </body>
 </html>
 
-<?php /**PATH /Users/abscom23/Desktop/SIPS/resources/views/splash.blade.php ENDPATH**/ ?>
+<?php /**PATH /Users/abscom23/Documents/SIPS/resources/views/splash.blade.php ENDPATH**/ ?>
